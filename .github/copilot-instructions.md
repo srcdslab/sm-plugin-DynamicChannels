@@ -11,8 +11,8 @@ This repository contains a SourcePawn plugin for SourceMod called "Dynamic Game_
 ## Technical Environment
 - **Language**: SourcePawn
 - **Platform**: SourceMod 1.12+ (latest stable release)
-- **Compiler**: SourcePawn compiler (spcomp) via SourceKnight build system
-- **Build Tools**: SourceKnight (configured in `sourceknight.yaml`)
+- **Compiler**: SourcePawn compiler (spcomp) via native GitHub Actions CI
+- **Build Tools**: GitHub Actions workflow (configured in `.github/workflows/ci.yml`)
 - **Target Games**: Source engine games (tested on CS:GO)
 - **Dependencies**: SourceMod SDK, SDKHooks, DHooks extensions
 
@@ -77,7 +77,6 @@ This repository contains a SourcePawn plugin for SourceMod called "Dynamic Game_
 ├── .github/
 │   ├── workflows/ci.yml            # Build automation
 │   └── copilot-instructions.md     # This file
-├── sourceknight.yaml              # Build configuration
 └── README.md                      # Plugin documentation
 ```
 
@@ -113,7 +112,7 @@ native int GetDynamicChannel(int group);
 ## Build & Validation Process
 
 ### Building
-1. **SourceKnight Build**: Use `sourceknight build` or GitHub Actions CI
+1. **GitHub Actions CI**: Push or open a PR to trigger the `.github/workflows/ci.yml` build
 2. **Manual Compilation**: `spcomp DynamicChannels.sp -iinclude/`
 3. **Output**: Generates `.smx` files in the plugins directory
 
