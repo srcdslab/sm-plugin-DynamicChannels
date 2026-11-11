@@ -10,7 +10,7 @@ public Plugin myinfo =
 	name = "Dynamic Game_Text Channels",
 	author = "Vauff",
 	description = "Provides a native for plugins to implement that handles automatic game_text channel assignment based on current map channels",
-	version = "2.1.3",
+	version = "2.1.4",
 	url = "https://github.com/Vauff/DynamicChannels"
 };
 
