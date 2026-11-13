@@ -10,11 +10,17 @@ public Plugin myinfo =
 	name = "Dynamic Game_Text Channels",
 	author = "Vauff",
 	description = "Provides a native for plugins to implement that handles automatic game_text channel assignment based on current map channels",
-	version = "2.1.4",
+	version = "2.1.5",
 	url = "https://github.com/Vauff/DynamicChannels"
 };
 
 Handle g_hAcceptInput;
+
+// variant_t::fieldType value for a string_t (fieldtype_t FIELD_STRING)
+#define VARIANT_FIELD_STRING 2
+
+// Offset of variant_t::fieldType, from gamedata: 16 on x86, 20 on x86_64
+int g_iVariantTypeOffset = -1;
 ConVar g_cvWarnings;
 
 int g_iGroupChannels[] = {-1, -1, -1, -1, -1, -1};
@@ -64,6 +70,16 @@ public void OnAllPluginsLoaded()
 	DHookAddParam(g_hAcceptInput, HookParamType_Int);
 
 	CloseHandle(gameData);
+
+	GameData variantData = new GameData("DynamicChannels.games");
+	if (variantData == null)
+		SetFailState("Can't find DynamicChannels gamedata!");
+
+	g_iVariantTypeOffset = variantData.GetOffset("variant_t::fieldType");
+	delete variantData;
+
+	if (g_iVariantTypeOffset == -1)
+		SetFailState("Failed to find variant_t::fieldType offset in DynamicChannels gamedata!");
 }
 
 public void OnMapStart()
@@ -121,6 +137,11 @@ public MRESReturn AcceptInput(int pThis, Handle hReturn, Handle hParams)
 
 	if (strcmp("AddOutput", input, false) == 0)
 	{
+		// Only a FIELD_STRING variant holds a string_t. On x86_64 string_t is 8 bytes but int/float
+		// values only fill 4, so reading any other variant as a string can follow a garbage pointer.
+		if (DHookGetParamObjectPtrVar(hParams, 4, g_iVariantTypeOffset, ObjectValueType_Int) != VARIANT_FIELD_STRING)
+			return MRES_Ignored;
+
 		char parameter[256];
 		char splitParameter[256];
 
